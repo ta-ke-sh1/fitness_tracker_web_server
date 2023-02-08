@@ -10,6 +10,6 @@ router.get("/", async (req, res) => {
 async function classify() {
     const model = await tf.loadLayersModel('./classifer/model.json');
     model.predict();
-}
+} 
 
 module.exports = router;

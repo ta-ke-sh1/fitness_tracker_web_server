@@ -7,7 +7,6 @@ app.use(express.static(__dirname + "/public"));
 
 app.use("/report", reportController);
 
-
 app.get('/', (req, res) => {
     console.log('Hello')
 })
