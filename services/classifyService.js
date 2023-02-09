@@ -9,11 +9,27 @@ class ClassifyService {
         const model = await tf.loadLayersModel('http://localhost:5000/model.json');
         var data = this.readDataset('./dataset/ClassificationData.txt');
         var processedData = this.convertToInput(data, 100, 2);
+        console.log(data.length)
         console.log(processedData.length)
         const prediction = model.predict(tf.tensor3d(processedData)).arraySync();
         let result = this.getResult(prediction);
-        console.log(result);
+        this.relabelData(data, result, 100);
+    }
 
+    static relabelData(original, predicted, time_steps = 1) {
+        var Xs = [];
+        for (let i = 0; i < original.length - time_steps; i++) {
+            var row = [];
+            for (let j = 0; j < original[0].length; j++) {
+                row.push(original[i][j]);
+            }
+            row.push(predicted[Math.round(i / 2)]);
+            Xs.push(row);
+        }
+        console.log(Xs)
+        var file = fs.createWriteStream('classifiedData/classified.txt');
+        Xs.forEach(function (v) { file.write(v.join('\t') + '\n'); });
+        file.end();
     }
 
     static getResult(predictedDataset) {
@@ -39,7 +55,7 @@ class ClassifyService {
 
     static convertToInput(X, time_steps = 1, step = 1) {
         var Xs = [];
-        for (let i = 24; i < X.length - time_steps - 25; i += step) {
+        for (let i = 0; i < X.length - time_steps; i += step) {
             var row = [];
             for (let k = 0; k < time_steps; k++) {
                 let frame = [];
@@ -55,10 +71,10 @@ class ClassifyService {
 }
 
 const labels = {
-    0: 'Walking',
+    0: 'Lying',
     1: 'Running',
     2: 'Standing',
-    3: 'Lying',
+    3: 'Walking',
 }
 
 module.exports = ClassifyService;
