@@ -18,7 +18,9 @@
     "express": "^4.18.2",
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^4.2.1",
-    "nodemon": "^2.0.20"
+    "low-pass-filter": "^1.0.0",
+    "nodemon": "^2.0.20",
+    "signaljs": "^1.0.1"
   },
   "devDependencies": {
     "firebase-functions-test": "^0.2.0"

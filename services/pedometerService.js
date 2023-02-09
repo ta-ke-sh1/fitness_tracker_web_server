@@ -1,10 +1,35 @@
 const fs = require('fs')
-
+const lowPassFilter = require('low-pass-filter').lowPassFilter
 class Pedometer {
     constructor (args) { }
 
     static stepCounting(data) {
-        
+        var filtered = this.lowPass(data, .001, this.rcByFrequency(10));
+        let peakCount = 0;
+        console.log(filtered)
+        for (let i = 1; i < filtered.length - 1; i++) {
+            if (filtered[i - 1] < filtered[i] && filtered[i + 1] < filtered[i]) {
+                peakCount++;
+            }
+        }
+        console.log(Math.round(peakCount / 2))
+        return peakCount;
+    }
+
+    static lowPass(samples, dt, rc) {
+        var y = [],
+            alpha = dt / (rc + dt),
+            i;
+        console.log("alpha=", alpha);
+        y[0] = alpha * samples[0];
+        for (i = 1; i < samples.length; i++) {
+            y[i] = parseFloat((alpha * samples[i] + (1 - alpha) * y[i - 1]).toFixed(3));
+        }
+        return y;
+    }
+
+    static rcByFrequency(f) {
+        return 1 / (f * 2 * Math.PI);
     }
 
     static loadClassified(filePath) {
@@ -13,18 +38,8 @@ class Pedometer {
         text.forEach((e) => {
             var row = [];
             if (e.includes('Walking') || e.includes('Running')) {
-                e.split('\t').forEach((num) => {
-                    if (isNaN(num)) {
-                        row.push(num)
-                    } else {
-                        row.push(parseFloat(num))
-                    }
-                })
+                res.push(e.split('\t')[0])
             }
-            if (row.length > 0) {
-                res.push(row)
-            }
-
         })
         return res.slice(0, -1);
     }

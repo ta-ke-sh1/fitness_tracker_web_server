@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/", async (req, res) => {
     console.log('Hello');
     const classifiedData = Pedometer.loadClassified('./classifiedData/classified.txt')
-    console.log(classifiedData[classifiedData.length - 1])
+    Pedometer.stepCounting(classifiedData)
 });
 
 module.exports = router;
