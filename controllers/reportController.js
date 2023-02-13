@@ -6,8 +6,33 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
     console.log('Hello');
-    const classifiedData = Pedometer.loadClassified('./classifiedData/classified.txt')
-    Pedometer.stepCounting(classifiedData)
+    const xAxis = Pedometer.loadClassified('./classifiedData/classified.txt')
+    let stepCount = Pedometer.stepCounting(xAxis)
+    res.send({
+        date: '2023/02/09',
+        steps: stepCount
+    });
 });
+
+router.post("/upload/hour", async (req, res) => {
+    ClassifyService.classify();
+    const xAxis = Pedometer.loadClassified('./classifiedData/classified.txt')
+    let stepCount = Pedometer.stepCounting(xAxis)
+    res.send({
+        date: '2023/02/09',
+        steps: stepCount
+    });
+});
+
+router.post("/upload/session", async (req, res) => {
+    ClassifyService.classify();
+    const xAxis = Pedometer.loadClassified('./classifiedData/classified.txt')
+    let stepCount = Pedometer.stepCounting(xAxis)
+    res.send({
+        date: '2023/02/09',
+        steps: stepCount
+    });
+});
+
 
 module.exports = router;
